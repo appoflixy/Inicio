@@ -307,12 +307,28 @@ transform: translateY(200px); /* Ajusta este valor para mover el modal hacia aba
     transition: background-color 0.3s ease, transform 0.2s ease; /* Transición suave */
 }
 
-.ax:hover {
-    background-color: #444444; /* Gris más claro al pasar el mouse */
-    transform: scale(1.05); /* Efecto de escala al pasar el mouse */
+
+.ax {
+    display: inline-block; 
+    padding: 12px 24px;
+    background-color: #333333; /* Gris oscuro */
+    color: white; 
+    text-align: center; 
+    text-decoration: none; 
+    border: none; /* Sin borde */
+    border-radius: 5px; 
+    margin-right: 10px;
+    font-size: 16px; /* Tamaño de fuente más grande */
+    font-weight: bold; /* Negrita */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5), 0 2px 4px rgba(0, 0, 0, 0.3); /* Sombra para efecto 3D */
+    transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.2s ease; /* Transición suave */
 }
 
-
+.ax:hover {
+    background-color: #444444; /* Gris más claro al pasar el mouse */
+    transform: translateY(-2px) scale(1.05); /* Efecto de movimiento y escala al pasar el mouse */
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.6), 0 4px 8px rgba(0, 0, 0, 0.4); /* Aumentar sombra al pasar el mouse */
+}
 
 
 
