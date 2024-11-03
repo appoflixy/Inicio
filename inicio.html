@@ -294,15 +294,23 @@ transform: translateY(200px); /* Ajusta este valor para mover el modal hacia aba
 
 .ax {
     display: inline-block; 
-    padding: 10px 20px;
-    background-color: #333333; color: 
-    white; text-align: center; 
+    padding: 12px 24px;
+    background-color: #333333; /* Gris oscuro */
+    color: white; 
+    text-align: center; 
     text-decoration: none; 
+    border: none; /* Sin borde */
     border-radius: 5px; 
     margin-right: 10px;
-    
+    font-size: 16px; /* Tamaño de fuente más grande */
+    font-weight: bold; /* Negrita */
+    transition: background-color 0.3s ease, transform 0.2s ease; /* Transición suave */
 }
 
+.ax:hover {
+    background-color: #444444; /* Gris más claro al pasar el mouse */
+    transform: scale(1.05); /* Efecto de escala al pasar el mouse */
+}
 
 
 
@@ -336,22 +344,21 @@ transform: translateY(200px); /* Ajusta este valor para mover el modal hacia aba
 
 
 <div class="imagen-contenedor">
-    <a href="series.html" target="_blank" style="display: inline-block; padding: 10px 20px; background-color: #333333; color: white; text-align: center; text-decoration: none; border-radius: 5px; margin-right: 10px;">
-        Séries
+    <button class="ax"      
+        onclick="window.location.href='series.html'">
+        Series
+    </button>
+
+    <button class="ax"      
+        onclick="window.location.href='anime.html'">
+        Anime
+    </button>
+
+    <button class="ax"      
+        onclick="window.location.href='flixytv.html'">
+        Flixy tv
+    </button>
     </a>
-
-    <a href="anime.html" target="_blank" style="display: inline-block; padding: 10px 20px; background-color: #333333; color: white; text-align: center; text-decoration: none; border-radius: 5px; margin-right: 10px;">
-        Anime 
-    </a>
-
-    <a href="flixytv.html" target="_blank" style="display: inline-block; padding: 10px 20px; background-color: #333333; color: white; text-align: center; text-decoration: none; border-radius: 5px;">
-        FLIXY tv 
-    </a>
-
-
-    <h2 class="titulo-seccion">Películas
-                <button class="ax" onclick="window.location.href='películas.html'">Ver Más</button>
-            </h2>
 </div>
 
 
