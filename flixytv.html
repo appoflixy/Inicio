@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reproductor IPTV</title>
+    <style>
+        body {
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            background-image: url('https://img.freepik.com/vector-premium/fondo-negro-lineas-grises_78370-2208.jpg');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            color: #fff;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+        }
+        .player-container {
+            position: relative;
+            width: 100%;
+            flex: 0 0 auto;
+            background-color: rgba(10, 10, 10, 0.95); /* Fondo oscuro más sutil */
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+        }
+        video {
+            width: 100%;
+            height: 250px; /* Altura fija del reproductor */
+            border-radius: 10px 10px 0 0; /* Esquinas redondeadas */
+        }
+        .buttons-container {
+            display: flex;
+            overflow-x: auto;
+            white-space: nowrap;
+            background-color: rgba(0, 0, 0, 0.9); /* Fondo negro con 90% de opacidad */
+            padding: 10px 0;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+        }
+        .buttons-container::-webkit-scrollbar {
+            height: 8px;
+        }
+        .buttons-container::-webkit-scrollbar-thumb {
+            
+            border-radius: 100px;
+        }
+        .group-button {
+            background-color: #000000; /* Fondo negro */
+            color: white;
+            border: none;
+            padding: 6px 5px;
+            font-size: 16px;
+            cursor: pointer;
+            margin-right: 10px;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+            font-weight: bold;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+        }
+        .group-button:hover {
+            
+        }
+        .channel-list {
+            
+            backdrop-filter: blur(10px);
+            padding: 10px;
+            max-height: calc(100vh - 200px);
+            overflow-y: auto;
+            margin-top: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            border-radius: 10px;
+        }
+        .channel-item {
+        
+            display: flex;
+            align-items: center;
+            padding: 10px; /* Espaciado */
+            border-bottom: 1px solid #444; /* Línea de separación */
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            font-size: 14px; /* Tamaño de fuente */
+            color: #ccc; /* Texto más claro */
+            border-radius: 5px; /* Bordes redondeados */
+        }
+        .channel-item.selected {
+            background-color: rgba(40, 40, 40, 0.5); /* Fondo gris oscuro con 50% de opacidad */
+            color: white; /* Cambiar el color del texto para mayor contraste */
+        }
+        .channel-item img {
+            width: 30px; /* Tamaño del logo */
+            height: 30px; /* Tamaño del logo */
+            margin-right: 10px; /* Espaciado entre logo y texto */
+            border-radius: 5px; /* Esquinas redondeadas */
+        }
+        .channel-item:last-child {
+            border-bottom: none;
+        }
+        .footer {
+            background-color: rgba(10, 10, 10, 0.95);
+            padding: 10px;
+            text-align: center;
+            color: #fff;
+            position: relative;
+            bottom: 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="player-container">
+        <video id="iptvPlayer" controls preload="auto">
+            <source id="videoSource" src="" type="application/x-mpegURL">
+            Tu navegador no soporta la reproducción de videos.
+        </video>
+        <div class="buttons-container" id="groupButtons">
+            <!-- Los botones de grupos se generarán dinámicamente -->
+        </div>
+    </div>
+
+    <div class="channel-list" id="channelList">
+        <!-- Lista de canales se generará dinámicamente -->
+    </div>
+
+    <script>
+        const player = document.getElementById('iptvPlayer');
+
+        // Cargar la lista M3U
+        fetch('https://raw.githubusercontent.com/Iptv-cnls/Listas/refs/heads/main/lista3.m3u')
+        .then(response => response.text())
+        .then(data => {
+            const groups = {};
+            const channels = [];
+            const lines = data.split('\n');
+
+            // Analizar el contenido de la lista M3U
+            lines.forEach((line, index) => {
+                if (line.startsWith('#EXTINF')) {
+                    const groupName = line.match(/group-title="([^"]+)"/)?.[1];
+                    const channelName = line.match(/,(.*)/)?.[1]?.trim();
+                    const url = lines[index + 1]?.trim();
+                    const logo = line.match(/tvg-logo="([^"]+)"/)?.[1];
+
+                    if (groupName && channelName && url) {
+                        channels.push({ group: groupName, name: channelName, url: url, logo: logo });
+                        if (!groups[groupName]) {
+                            groups[groupName] = [];
+                        }
+                        groups[groupName].push({ name: channelName, url: url, logo: logo });
+                    }
+                }
+            });
+
+            // Crear los botones de los grupos
+            const groupButtonsDiv = document.getElementById('groupButtons');
+            for (const group in groups) {
+                const button = document.createElement('button');
+                button.className = 'group-button';
+                button.innerText = group;
+                button.onclick = () => {
+                    // Limpiar la lista de canales
+                    const channelListDiv = document.getElementById('channelList');
+                    channelListDiv.innerHTML = '';
+
+                    // Crear la lista de canales del grupo seleccionado
+                    groups[group].forEach((channel, index) => {
+                        const channelItem = document.createElement('div');
+                        channelItem.className = 'channel-item';
+                        
+                        const logoImg = document.createElement('img');
+                        logoImg.src = channel.logo || 'https://via.placeholder.com/30';
+
+                        const channelText = document.createElement('span');
+                        channelText.innerText = `${index + 1}. ${channel.name}`;
+
+                        channelItem.appendChild(logoImg);
+                        channelItem.appendChild(channelText);
+
+                        channelItem.onclick = () => {
+                            // Remover la clase 'selected' de todos los canales
+                            document.querySelectorAll('.channel-item').forEach(item => {
+                                item.classList.remove('selected');
+                            });
+
+                            // Agregar la clase 'selected' al canal clicado
+                            channelItem.classList.add('selected');
+
+                            document.getElementById('videoSource').src = channel.url;
+                            player.load();
+                            player.play();
+                        };
+
+                        channelListDiv.appendChild(channelItem);
+                    });
+                };
+                groupButtonsDiv.appendChild(button);
+            }
+
+            // Mostrar todos los canales al cargar la página
+            const channelListDiv = document.getElementById('channelList');
+            channels.forEach((channel, index) => {
+                const channelItem = document.createElement('div');
+                channelItem.className = 'channel-item';
+
+                const logoImg = document.createElement('img');
+                logoImg.src = channel.logo || 'https://via.placeholder.com/30';
+
+                const channelText = document.createElement('span');
+                channelText.innerText = `${index + 1}. ${channel.name}`;
+
+                channelItem.appendChild(logoImg);
+                channelItem.appendChild(channelText);
+
+                channelItem.onclick = () => {
+                    // Remover la clase 'selected' de todos los canales
+                    document.querySelectorAll('.channel-item').forEach(item => {
+                        item.classList.remove('selected');
+                    });
+
+                    // Agregar la clase 'selected' al canal clicado
+                    channelItem.classList.add('selected');
+
+                    document.getElementById('videoSource').src = channel.url;
+                    player.load();
+                    player.play();
+                };
+
+                channelListDiv.appendChild(channelItem);
+            });
+
+            // Cargar automáticamente el primer canal en el reproductor
+            if (channels.length > 0) {
+                const firstChannel = channels[0];
+                document.getElementById('videoSource').src = firstChannel.url;
+                player.load();
+                player.play();
+
+                // Marcar el primer canal como seleccionado
+                document.querySelectorAll('.channel-item')[0].classList.add('selected');
+            }
+        })
+        .catch(error => console.error('Error al cargar la lista M3U:', error));
+    </script>
+</body>
+</html>

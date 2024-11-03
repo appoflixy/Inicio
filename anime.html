@@ -1,0 +1,462 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Anime</title>
+    <style>
+        body {
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            background-color: #0c0c0c; /* Fondo más oscuro */
+            color: #ffffff;
+            margin: 0;
+            padding: 0;
+        }
+
+
+
+nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    padding: 10px 20px;
+    background-size: cover; /* Asegúrate de que la imagen cubra todo el nav */
+    background-position: center; /* Centra la imagen */
+}
+
+nav::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #0a0a0a; /* Fondo más oscuro */
+
+    backdrop-filter: blur(10px); /* Efecto de desenfoque */
+    z-index: -1; /* Coloca el pseudo-elemento detrás del contenido del nav */
+}
+
+
+nav a {
+    color: white;
+    text-decoration: none;
+    padding: 10px 20px;
+    font-size: 28px; /* Tamaño de letra más grande */
+    font-weight: bold;
+    display: inline-block;
+    transition: transform 0.2s, background 0.3s;
+}
+
+
+
+
+
+
+
+
+
+        .search-input {
+    padding: 12px 20px;
+    width: 200px; /* Ancho del buscador */
+    border: 2px solid rgba(255, 255, 255, 0.5);
+    border-radius: 18px;
+    outline: none;
+    font-size: 16px;
+    background-color: rgba(0, 0, 0, 0.7);
+    color: white;
+    transition: border-color 0.3s, box-shadow 0.3s;
+}
+.search-input::placeholder {
+    color: rgba(255, 255, 255, 0.6);
+}
+
+.search-input:focus {
+    border-color: #e50914;
+    box-shadow: 0 0 10px rgba(229, 9, 20, 0.5);
+}
+
+.search-button {
+    padding: 12px 20px;
+    background-color: #e50914; /* Color rojo de Netflix */
+    color: white;
+    border: none;
+    border-radius: 25px; /* Bordes redondeados */
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s;
+    margin-left: 10px; /* Espacio entre el input y el botón */
+}
+
+.search-button:hover {
+    background-color: #b00710; /* Color más oscuro al pasar el mouse */
+}
+
+
+
+
+
+
+
+        .dark-button {
+    background-color: #a50000; /* Color de fondo rojo más oscuro */
+    padding: 10px 20px; /* Mantener el mismo padding que los otros botones */
+    border-radius: 5px; /* Bordes redondeados */
+    transition: background 0.3s; /* Transición para el color de fondo */
+}
+
+
+
+
+
+
+
+
+
+
+.gallery {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr); /* Mantener 4 columnas */
+    gap: 5px;
+    padding: 10px;
+    z-index: 3; /* Asegúrate de que esté por encima del overlay */
+    position: relative; /* Necesario para el z-index */
+}
+
+.gallery img {
+    width: 100%;
+    border-radius: 10px; /* Bordes redondeados */
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s; /* Efectos de transición */
+}
+
+.gallery img:hover {
+    transform: scale(1.05); /* Escalar imagen al pasar el ratón */
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5); /* Sombra al pasar el ratón */
+}
+
+
+
+
+
+
+
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(12, 12, 12, 0.712); /* Fondo más oscuro */
+    justify-content: center;
+    align-items: center;
+    z-index: 4; /* Asegúrate de que esté por encima del overlay */
+    backdrop-filter: blur(10px); /* Efecto de difuminado en el fondo del modal */
+}
+
+.modal-content {
+    background: rgba(0, 0, 0, 0.151); /* Fondo más oscuro */
+    backdrop-filter: blur(1px); /* Efecto de difuminado */
+    padding: 36px;
+    text-align: center;
+    width: 80%;
+    max-width: 600px;
+    border-radius: 10px; /* Bordes redondeados en el modal */
+    box-shadow: 0 5px 20px rgba(255, 0, 0, 0); /* Sombra del modal */
+    color: white; /* Color del texto a blanco */
+    
+}
+
+.close {
+    float: right;
+    cursor: pointer;
+    color: white;
+    font-size: 24px; /* Aumentar el tamaño de la X */
+}
+
+.close:hover {
+    color: #fff; /* Cambiar color al pasar el ratón */
+}
+
+.accordion {
+    background-color: #C00; /* Fondo rojo menos intenso */
+    border: none;
+    color: #fff;
+    cursor: pointer;
+    padding: 10px;
+    width: 100%;
+    text-align: left;
+    font-size: 18px;
+    transition: background-color 0.3s;
+    border-radius: 5px; /* Bordes redondeados */
+    margin-top: 10px;
+}
+
+.accordion:hover {
+    background-color: #FF0000; /* Fondo rojo */
+}
+
+.panel {
+    padding: 0 18px;
+    display: none;
+    background: rgba(0, 0, 0, 0.3); /* Fondo más oscuro */
+    border-radius: 5px; /* Bordes redondeados */
+    overflow: hidden;
+    text-align: left;
+}
+
+.panel p {
+    margin: 10px 0;
+    padding: 8px;
+    
+    border-radius: 1px; /* Bordes redondeados */
+    transition: background 0.3s; /* Transición al pasar el ratón */
+    
+    border-bottom: 1px solid #ccc; /* Línea separadora */
+}
+
+
+
+.panel p:hover {
+    background: rgba(255, 0, 0, 0.1); /* Cambiar el fondo al pasar el ratón */
+}
+
+/* Estilo para el modal del reproductor */
+#player-modal {
+    display: flex; /* Cambiado para usar flexbox */
+    flex-direction: column; /* Coloca los elementos en columna */
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.9); /* Fondo más oscuro */
+    justify-content: center;
+    align-items: center;
+    margin: 0; /* Sin márgenes */
+    padding: 0; /* Sin rellenos */
+}
+
+#chapter-player {
+    width: 100%; /* Ocupa todo el ancho disponible */
+    height: 200px; /* Altura fija para el reproductor */
+    border-radius: 10px; /* Bordes redondeados para el iframe */
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5); /* Sombra del reproductor */
+    margin: 0; /* Sin márgenes */
+    padding: 0; /* Sin rellenos */
+}
+
+/* Asegurarse de que no haya rellenos o márgenes en el body */
+body {
+    margin: 0; /* Sin márgenes en el body */
+    padding: 0; /* Sin rellenos en el body */
+}
+
+    </style>
+</head>
+<body>
+
+    <nav>
+        <div>
+            <a href="#">Anime</a>
+        </div>
+       
+            <div class="search-container">
+                <input 
+                    type="text" 
+                id="search" 
+                class="search-input" 
+                placeholder="Buscar series..." 
+                onkeyup="filterSeries()"
+            </div>    
+        
+    </nav>
+
+   
+
+
+
+<div class="gallery" id="gallery"></div>
+
+<!-- Modal para la serie -->
+<div id="modal" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="closeModal()">&times;</span>
+        <h2 id="serie-title"></h2>
+        <div id="seasons"></div>
+    </div>
+</div>
+
+<!-- Modal para el reproductor -->
+<div id="player-modal" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="closePlayerModal()">&times;</span>
+        <iframe id="chapter-player" src="" scrolling="no" frameborder="0" allowfullscreen="true" webkitallowfullscreen="true" mozallowfullscreen="true" sandbox="allow-scripts"></iframe>
+    </div>
+</div>
+
+<script>
+    const m3uUrl = 'https://raw.githubusercontent.com/Iptv-cnls/Panel-apliyde-pel-culas/refs/heads/main/anime.m3u';
+    let seriesData = {}; // Variable para almacenar los datos de las series
+
+    async function fetchM3UData() {
+        const response = await fetch(m3uUrl);
+        const data = await response.text();
+        seriesData = parseM3UData(data); // Almacena los datos en una variable global
+        displaySeries(seriesData); // Muestra las series iniciales
+    }
+
+    function parseM3UData(data) {
+        const series = {};
+        const lines = data.split('\n');
+
+        let currentSerie = null;
+        let currentSeason = null;
+
+        lines.forEach(line => {
+            if (line.startsWith('#EXTINF')) {
+                const match = line.match(/tvg-name="([^"]+)" tvg-logo="([^"]+)"/);
+                if (match) {
+                    const [_, serieName, logoUrl] = match;
+                    if (!series[serieName]) {
+                        series[serieName] = { title: serieName, logo: logoUrl, seasons: {} };
+                    }
+                    currentSerie = serieName;
+                    currentSeason = "Temporada 1"; // Reiniciar temporada
+                }
+            } else if (line.startsWith('http')) {
+                if (currentSerie) {
+                    // Aquí se maneja la asignación de episodios a la temporada actual
+                    if (!series[currentSerie].seasons[currentSeason]) {
+                        series[currentSerie].seasons[currentSeason] = [];
+                    }
+                    series[currentSerie].seasons[currentSeason].push(line);
+                }
+            } else if (line.includes("Temporada")) {
+                const newSeason = line.trim();
+                if (newSeason) {
+                    currentSeason = newSeason; // Actualizar temporada
+                    if (!series[currentSerie].seasons[currentSeason]) {
+                        series[currentSerie].seasons[currentSeason] = []; // Inicializar si no existe
+                    }
+                }
+            }
+        });
+
+        // Filtrar temporadas vacías
+        for (let serie in series) {
+            const validSeasons = Object.entries(series[serie].seasons).filter(([_, chapters]) => chapters.length > 0);
+            series[serie].seasons = Object.fromEntries(validSeasons);
+        }
+
+        return series; // Devolver la colección de series
+    }
+
+    function displaySeries(series) {
+        const gallery = document.getElementById('gallery');
+        gallery.innerHTML = '';
+
+        for (let serie in series) {
+            const img = document.createElement('img');
+            img.src = series[serie].logo;
+            img.alt = series[serie].title;
+            img.onclick = () => openModal(serie, series[serie]);
+            gallery.appendChild(img);
+        }
+    }
+
+    function filterSeries() {
+        const query = document.getElementById('search').value.toLowerCase();
+        const filteredSeries = {};
+
+        for (let serie in seriesData) {
+            if (serie.toLowerCase().includes(query)) {
+                filteredSeries[serie] = seriesData[serie]; // Agregar a las series filtradas
+            }
+        }
+
+        displaySeries(filteredSeries); // Mostrar las series filtradas
+    }
+
+    function openModal(serieKey, serie) {
+        const modal = document.getElementById("modal");
+        document.getElementById("serie-title").innerText = serie.title;
+
+        const seasonsContainer = document.getElementById("seasons");
+        seasonsContainer.innerHTML = '';  // Limpiar contenido previo
+        let seasonNumber = 1; // Contador para las temporadas
+        for (let season in serie.seasons) {
+            if (season) { // Asegurarse de que existe la temporada
+                const button = document.createElement("button");
+                button.classList.add("accordion");
+                button.innerText = `Temporada ${seasonNumber}`; // Solo mostrar "Temporada X"
+                button.onclick = function() {
+                    this.classList.toggle("active");
+                    const panel = this.nextElementSibling;
+                    panel.style.display = panel.style.display === "block" ? "none" : "block";
+                };
+
+                const panel = document.createElement("div");
+                panel.classList.add("panel");
+
+                // Mostrar los capítulos con "Capítulo X"
+                serie.seasons[season].forEach((chapter, index) => {
+                    const p = document.createElement("p");
+                    p.innerText = `Capítulo ${index + 1}`; // Mostrar solo el número del capítulo
+                    // Añadir evento onclick para abrir el reproductor
+                    p.onclick = () => {
+                        openPlayerModal(chapter); // Pasar la URL del capítulo
+                        closeModal(); // Cerrar el modal de la serie
+                    };
+                    panel.appendChild(p);
+                });
+
+                seasonsContainer.appendChild(button);
+                seasonsContainer.appendChild(panel);
+                seasonNumber++; // Incrementar el número de temporada
+            }
+        }
+
+        modal.style.display = "flex";
+    }
+
+    function closeModal() {
+        document.getElementById("modal").style.display = "none";
+    }
+
+    function openPlayerModal(chapterUrl) {
+        const playerModal = document.getElementById("player-modal");
+        document.getElementById("chapter-player").src = chapterUrl; // Asignar la URL al iframe
+        playerModal.style.display = "flex"; // Mostrar el modal del reproductor
+    }
+
+    function closePlayerModal() {
+        const playerModal = document.getElementById("player-modal");
+        playerModal.style.display = "none"; // Cerrar el modal del reproductor
+        document.getElementById("chapter-player").src = ""; // Limpiar la URL
+    }
+
+    window.onclick = function(event) {
+        const modal = document.getElementById("modal");
+        const playerModal = document.getElementById("player-modal");
+        if (event.target === modal) {
+            modal.style.display = "none";
+        }
+        if (event.target === playerModal) {
+            closePlayerModal();
+        }
+    }
+
+    // Cargar los datos del archivo M3U al cargar la página
+    fetchM3UData();
+
+</script>
+
+</body>
+</html>
