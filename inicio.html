@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inicio - Aplicación de Streaming</title>
+    <style>
+        body {
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            background-color: #0c0c0c; /* Fondo más oscuro */
+            color: #ffffff;
+            margin: 0;
+            padding: 0;
+        }
+        header {
+            background-color: #181818;
+            padding: 20px;
+            text-align: center;
+        }
+        header h1 {
+            margin: 0;
+            font-size: 24px;
+        }
+        .slider {
+            position: relative;
+            overflow: hidden;
+            margin: 2px 0;
+            border-radius: 5px; /* Bordes redondeados para el slider */
+        }
+        .slides {
+            display: flex;
+            transition: transform 0.5s ease-in-out;
+        }
+        .slide {
+            min-width: 100%;
+            position: relative; /* Para poder posicionar elementos dentro */
+        }
+        .slide img {
+            width: 100%; /* Ocupa el 100% del contenedor */
+            border-radius: 5px; /* Bordes redondeados para las imágenes */
+            display: block; /* Eliminar espacio debajo de la imagen */
+        }
+        .slide::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 20%; /* Altura del difuminado */
+            background: linear-gradient(to bottom, rgba(10, 10, 10, 0), rgba(10, 10, 10, 5)); /* Difuminado más oscuro */
+            border-radius: 0 0 5px 5px; /* Bordes redondeados en la parte inferior */
+        }
+        .texto-imagen {
+            position: absolute;
+            bottom: 20%; /* Ajusta el espacio desde la parte inferior */
+            left: 20px; /* Espaciado desde el lado izquierdo */
+            color: white; /* Color del texto */
+            z-index: 10; /* Asegúrate de que el texto esté por encima del difuminado */
+        }
+        .texto-imagen h3 {
+            margin: 0;
+            font-size: 24px; /* Tamaño del título */
+        }
+        .texto-imagen p {
+            margin: 5px 0 0 0;
+            font-size: 16px; /* Tamaño de la descripción */
+        }
+        .indicadores {
+            text-align: center;
+            margin-top: 10px;
+        }
+        .indicador {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            margin: 0 5px;
+            background-color: #555;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+        .indicador.active {
+            background-color: #ffffff; /* Color activo para el indicador */
+        }
+        .seccion {
+            margin: 20px 0;
+        }
+        .titulo-seccion {
+            font-size: 20px; /* Tamaño de fuente reducido para los títulos */
+            margin-left: 20px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between; /* Para separar el título y el botón */
+            align-items: center; /* Centrar verticalmente */
+        }
+        .ver-mas {
+            background-color: #e50914; /* Color rojo de Netflix */          font-size: 18px; /* Tamaño de fuente reducido para los títulos */
+            color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 5px 10px;
+            cursor: pointer;
+            text-decoration: none; /* Quitar subrayado */
+            font-weight: bold;
+            margin-right: 20px; /* Margen a la derecha para evitar estar pegado al borde */
+        }
+        .peliculas {
+            display: flex;
+            overflow-x: auto; /* Hacer que la sección sea deslizable horizontalmente */
+            padding: 10px; /* Espacio interno */
+            gap: 10px; /* Espacio entre las carátulas */
+        }
+        .pelicula {
+            min-width: 120px; /* Tamaño mínimo de las carátulas */
+            border-radius: 5px;
+            transition: transform 0.2s; /* Efecto de hover */
+        }
+        .pelicula img {
+            width: 100%; /* Ocupa el 100% del contenedor */
+            border-radius: 5px;
+            transition: transform 0.2s; /* Efecto de hover */
+        }
+        .pelicula:hover {
+            transform: scale(1.05); /* Aumentar tamaño al pasar el ratón */
+        }
+        /* Estilo para eliminar el scroll bar en navegadores modernos */
+        .peliculas::-webkit-scrollbar {
+            display: none;
+        }
+        .imagen-seccion {
+            position: absolute; /* Posicionamiento absoluto */
+            top: 225px;            /* Alineado al borde superior */
+            left: 15px;           /* Alineado al borde izquierdo */
+            z-index: 1000;    /* Asegúrate de que esté por encima de otros elementos */
+        }
+        .imagen-seccion img {
+            max-width: 100px; /* Ajusta la imagen al ancho del contenedor */
+            height: auto;    /* Mantiene la proporción de la imagen */
+        }
+
+        /* Estilos para el modal */
+/* Estilos para el modal */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.8); /* Fondo negro transparente */
+    backdrop-filter: blur(10px); /* Filtro de vidrio */
+    display: flex; /* Habilitar flexbox */
+    justify-content: center; /* Centrar horizontalmente */
+    align-items: center; /* Centrar verticalmente */
+}
+
+.modal-content {
+    transform: translateY(200px); /* Ajusta este valor para mover el modal hacia abajo */
+    padding: 20px; /* Espaciado interno */
+    border: 1px solid #888; /* Borde */
+    width: 70%; /* Ancho del modal */
+    max-width: 600px; /* Ancho máximo del modal */
+    max-height: 50vh; /* Altura máxima del modal */
+    overflow-y: auto; /* Permitir desplazamiento vertical si el contenido excede la altura */
+    background-color: rgba(24, 24, 24, 0.9); /* Fondo */
+    border-radius: 10px; /* Bordes redondeados */
+}
+
+.close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+    color: white;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+/* Otras clases del modal */
+.modal, .fullscreen-modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.8);
+    backdrop-filter: blur(10px); /* Filtro de vidrio */
+}
+
+.modal-content, .fullscreen-content {
+    background-color: rgba(24, 24, 24, 0.2); /* Fondo del contenido */
+    margin: 15% auto;
+    padding: 20px;
+    border: 1px;
+    width: 80%;
+    backdrop-filter: blur(1px); /* Filtro de vidrio */
+    border-radius: 10px; /* Opcional: bordes redondeados */
+}
+
+.modal-content h2 {
+    margin-top: 0;
+}
+
+iframe {
+    width: 100%;
+    height: 209px;
+    margin: 10px 0;
+}
+
+.fullscreen-content {
+    position: relative;
+    height: 100%;
+}
+
+#chapter-player {
+    height: calc(100vh - 40px); /* Ajusta el tamaño del reproductor */
+}
+
+
+.button {
+    background-color: #e50914; /* Rojo Netflix */
+    color: white; /* Texto blanco */
+    padding: 8px 16px; /* Espaciado reducido */
+    border: none; /* Sin borde */
+    border-radius: 5px; /* Bordes redondeados */
+    font-size: 14px; /* Tamaño de fuente reducido */
+    cursor: pointer; /* Cursor de mano */
+    transition: background-color 0.3s ease, transform 0.2s; /* Transiciones */
+    margin-bottom: 10px; /* Espacio entre los botones */
+}
+
+.button:last-child {
+    margin-bottom: 0; /* Eliminar margen del último botón */
+}
+.button:hover {
+    background-color: #f40612; /* Rojo más oscuro al pasar el mouse */
+    transform: scale(1.05); /* Efecto de aumento */
+}
+
+.button:active {
+    transform: scale(0.95); /* Efecto de reducción al hacer clic */
+}
+
+
+
+
+#chapter-player {
+    width: 100%; /* Ocupa el 100% del contenedor */
+    height: 90vh; /* Altura ajustada al 80% de la ventana */
+    border: none; /* Sin borde */
+}
+
+.fullscreen-content {
+transform: translateY(200px); /* Ajusta este valor para mover el modal hacia abajo */
+    width: 90%; /* Ancho del modal */
+    max-width: 1200px; /* Ancho máximo */
+    height: 30%; /* Altura del modal */
+    display: flex; /* Permite flexbox para centrar contenido */
+    flex-direction: column; /* Asegura que el contenido se apile */
+    justify-content: center; /* Centra verticalmente */
+}
+
+
+
+
+
+
+.imagen-contenedor {
+    
+    text-align: center; /* Centra la imagen */
+    margin: 20px; /* Espacio alrededor de la imagen */
+     */
+    padding: 10px; /* Espacio interno */
+    border: 1px ; /* Borde suave */
+    border-radius: 5px; /* Bordes redondeados opcional */
+}
+
+.imagen {
+    max-width: 100px; /* Ancho máximo de la imagen */
+    height: auto; /* Mantiene la proporción de la imagen */
+    
+}
+
+
+
+
+
+
+
+
+
+
+
+
+    </style>
+</head>
+<body>
+    <main>
+        <!-- Slider para Estrenos -->
+        
+
+        <div class="slider">
+            <div class="slides" id="slides-estrenos">
+                <!-- Aquí se añadirán las imágenes dinámicamente -->
+            </div>
+            <div class="indicadores" id="indicadores-estrenos"></div>
+        </div>
+
+
+
+
+
+<div class="imagen-contenedor">
+    <a  target="_blank"> <!-- Reemplaza con tu enlace -->
+        <img src="https://app-9ci.pages.dev/img/Flixy-logo.gif" alt="Descripción de la imagen" class="imagen">
+    </a>
+    
+</div>
+
+
+<div class="imagen-contenedor">
+    <a href="series.html" target="_blank" style="display: inline-block; padding: 10px 20px; background-color: #333333; color: white; text-align: center; text-decoration: none; border-radius: 5px; margin-right: 10px;">
+        Séries
+    </a>
+
+    <a href="anime.html" target="_blank" style="display: inline-block; padding: 10px 20px; background-color: #333333; color: white; text-align: center; text-decoration: none; border-radius: 5px; margin-right: 10px;">
+        Anime 
+    </a>
+
+    <a href="ENLACE_DE_DESTINO" target="_blank" style="display: inline-block; padding: 10px 20px; background-color: #333333; color: white; text-align: center; text-decoration: none; border-radius: 5px;">
+        FLIXY tv 
+    </a>
+</div>
+
+
+
+
+
+
+        <div class="seccion">
+            <h2 class="titulo-seccion">Películas
+                <button class="ver-mas" onclick="window.location.href='peliculas.html'">Ver Más</button>
+            </h2>
+            <div class="peliculas" id="peliculas-generales"></div>
+        </div>
+        <div class="seccion">
+            <h2 class="titulo-seccion">Terror
+                <button class="ver-mas" onclick="window.location.href='link_a_terror'">Ver Más</button>
+            </h2>
+            <div class="peliculas" id="peliculas-terror"></div>
+        </div>
+        <div class="seccion">
+            <h2 class="titulo-seccion">Infantil
+                <button class="ver-mas" onclick="window.location.href='link_a_infantil'">Ver Más</button>
+            </h2>
+            <div class="peliculas" id="peliculas-infantil"></div>
+        </div>
+        <div class="seccion">
+            <h2 class="titulo-seccion">Doramas
+                <button class="ver-mas" onclick="window.location.href='link_a_doramas'">Ver Más</button>
+            </h2>
+            <div class="peliculas" id="peliculas-doramas"></div>
+        </div>
+        <div class="seccion">
+            <h2 class="titulo-seccion">Comedia
+                <button class="ver-mas" onclick="window.location.href='link_a_comedia'">Ver Más</button>
+            </h2>
+            <div class="peliculas" id="peliculas-comedia"></div>
+        </div>
+    </main>
+
+<!-- Modal -->
+<div id="myModal" class="modal">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <h2>Tráiler</h2>
+        <iframe id="videoFrame" src="" frameborder="0" allowfullscreen></iframe>
+        <br>
+        <br>
+        <button id="verPelicula" class="button">Ver Película</button>
+        <button id="descargar"  class="button">Descargar</button>
+    </div>
+</div>
+
+<div id="fullscreen-player" class="fullscreen-modal">
+    <div class="fullscreen-content">
+        <span class="close" onclick="closeFullscreenPlayer()">&times;</span>
+        <iframe id="chapter-player" src="" scrolling="no" frameborder="0" allowfullscreen="true" webkitallowfullscreen="true" mozallowfullscreen="true" sandbox="allow-scripts"></iframe>
+    </div>
+</div>
+
+<script>
+    async function cargarPeliculas(url) {
+        const respuesta = await fetch(url);
+        const texto = await respuesta.text();
+        const lineas = texto.split('\n');
+        const peliculas = [];
+
+        for (let i = 0; i < lineas.length; i++) {
+            if (lineas[i].startsWith('#EXTINF')) {
+                const titulo = lineas[i].split(',')[1].trim();
+                const caratula = lineas[i + 1].trim();
+                const segundoEnlace = lineas[i + 2].trim(); // Enlace del tráiler
+                const tercerEnlace = lineas[i + 3].trim(); // Enlace para el reproductor
+                const cuartoEnlace = lineas[i + 4].trim(); // Enlace para descargar
+
+                if (caratula && segundoEnlace && tercerEnlace) {
+                    peliculas.push({
+                        titulo,
+                        caratula,
+                        segundoEnlace,
+                        tercerEnlace,
+                        cuartoEnlace,
+                    });
+                }
+            }
+        }
+        return peliculas;
+    }
+
+    async function mostrarEstrenos() {
+        const estrenos = await cargarPeliculas('https://raw.githubusercontent.com/Iptv-cnls/Panel-apliyde-pel-culas/refs/heads/main/Estrenos.m3u');
+        const slides = document.getElementById('slides-estrenos');
+        const indicadores = document.getElementById('indicadores-estrenos');
+
+        estrenos.forEach((pelicula, index) => {
+            const slide = document.createElement('div');
+            slide.classList.add('slide');
+            slide.innerHTML = `
+                <img src="${pelicula.caratula}" alt="Estreno" onerror="this.onerror=null; this.src='default.jpg';" onclick="abrirModal('${pelicula.segundoEnlace}', '${pelicula.cuartoEnlace}', '${pelicula.tercerEnlace}')">
+            `;
+            slides.appendChild(slide);
+
+            const indicador = document.createElement('span');
+            indicador.classList.add('indicador');
+            if (index === 0) {
+                indicador.classList.add('active');
+            }
+            indicador.addEventListener('click', () => {
+                mostrarSlide(index);
+            });
+            indicadores.appendChild(indicador);
+        });
+
+        let currentIndex = 0;
+        const totalSlides = estrenos.length;
+
+        function mostrarSlide(index) {
+            currentIndex = index;
+            slides.style.transform = `translateX(-${index * 100}%)`;
+            const indicadores = document.querySelectorAll('.indicador');
+            indicadores.forEach(ind => ind.classList.remove('active'));
+            indicadores[index].classList.add('active');
+        }
+
+        setInterval(() => {
+            currentIndex = (currentIndex + 1) % totalSlides;
+            mostrarSlide(currentIndex);
+        }, 5000);
+    }
+
+    async function cargarTodasLasPeliculas() {
+        const peliculasTerror = await cargarPeliculas('https://raw.githubusercontent.com/Iptv-cnls/Panel-apliyde-pel-culas/refs/heads/main/Terror.m3u');
+        const peliculasInfantil = await cargarPeliculas('https://raw.githubusercontent.com/Iptv-cnls/Panel-apliyde-pel-culas/refs/heads/main/Infantil.m3u');
+        const peliculasDoramas = await cargarPeliculas('https://raw.githubusercontent.com/Iptv-cnls/Panel-apliyde-pel-culas/refs/heads/main/Doramas.m3u');
+        const peliculasComedia = await cargarPeliculas('https://raw.githubusercontent.com/Iptv-cnls/Panel-apliyde-pel-culas/refs/heads/main/Comedia.m3u');
+        const peliculasGenerales = await cargarPeliculas('https://raw.githubusercontent.com/Iptv-cnls/Panel-apliyde-pel-culas/refs/heads/main/Peliculas.m3u');
+
+        return {
+            terror: peliculasTerror.slice(0, 10),
+            infantil: peliculasInfantil.slice(0, 10),
+            doramas: peliculasDoramas.slice(0, 10),
+            comedia: peliculasComedia.slice(0, 10),
+            generales: peliculasGenerales.slice(0, 10)
+        };
+    }
+
+    async function mostrarPeliculas() {
+        const peliculas = await cargarTodasLasPeliculas();
+
+        Object.keys(peliculas).forEach(genero => {
+            const contenedor = document.getElementById(`peliculas-${genero}`);
+            peliculas[genero].forEach((pelicula) => {
+                const divPelicula = document.createElement('div');
+                divPelicula.classList.add('pelicula');
+
+                divPelicula.innerHTML = `
+                    <img src="${pelicula.caratula}" alt="Carátula de película" onerror="this.onerror=null; this.src='default.jpg';" onclick="abrirModal('${pelicula.segundoEnlace}', '${pelicula.cuartoEnlace}', '${pelicula.tercerEnlace}')">
+                `;
+
+                contenedor.appendChild(divPelicula);
+            });
+        });
+    }
+
+    // Función para abrir el reproductor en pantalla completa
+    function abrirFullscreenPlayer(videoUrl) {
+        const player = document.getElementById("fullscreen-player");
+        const iframe = document.getElementById("chapter-player");
+        iframe.src = videoUrl; // Carga el video
+        player.style.display = "block"; // Muestra el reproductor
+    }
+
+    // Función para cerrar el reproductor
+    function closeFullscreenPlayer() {
+        const player = document.getElementById("fullscreen-player");
+        const iframe = document.getElementById("chapter-player");
+        player.style.display = "none"; // Oculta el reproductor
+        iframe.src = ""; // Limpia la URL del video
+    }
+
+    // Función para abrir el modal
+    function abrirModal(videoUrl, descargarUrl, tercerUrl) {
+        const modal = document.getElementById("myModal");
+        const videoFrame = document.getElementById("videoFrame");
+        const btnVer = document.getElementById("verPelicula");
+        const btnDescargar = document.getElementById("descargar");
+
+        videoFrame.src = videoUrl; // Asigna la URL del tráiler
+        videoFrame.setAttribute("allow", "autoplay"); // Permite la reproducción automática
+        modal.style.display = "block"; // Muestra el modal
+
+        // Configura los botones en el modal
+        btnVer.onclick = () => {
+            closeModal(); // Cierra el modal antes de abrir el reproductor
+            abrirFullscreenPlayer(tercerUrl); // Abre el reproductor con el tercer enlace
+        };
+        btnDescargar.onclick = () => {
+            window.open(descargarUrl, '_blank'); // Descargar
+        };
+    }
+
+    // Función para cerrar el modal y detener el tráiler
+    function closeModal() {
+        const modal = document.getElementById("myModal");
+        const videoFrame = document.getElementById("videoFrame");
+        modal.style.display = "none"; // Cierra el modal
+        videoFrame.src = ""; // Detiene la reproducción del tráiler
+    }
+
+    // Cerrar el modal al hacer clic en la 'x'
+    const span = document.getElementsByClassName("close")[0];
+    span.onclick = function() {
+        closeModal(); // Cierra el modal
+    }
+
+    // Cerrar el modal al hacer clic fuera del contenido
+    window.onclick = function(event) {
+        const modal = document.getElementById("myModal");
+        if (event.target === modal) {
+            closeModal(); // Cierra el modal
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        mostrarEstrenos();
+        mostrarPeliculas();
+    });
+</script>
+   
+</body>
+</html>
