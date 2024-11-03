@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Página de Inicio</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body, html {
+            height: 100%;
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            color: white;
+            position: relative;
+            overflow: hidden; /* Para evitar el desplazamiento del fondo */
+        }
+
+        .background {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('https://cnbl-cdn.bamgrid.com/assets/6e5f26c3d5a817c0f8604d425e5660d7b592dcc55f8825b47123fcaa1cafd862/original') no-repeat center center fixed;
+            background-size: cover;
+            filter: brightness(0.3); /* Ajusta el brillo según lo necesites */
+            z-index: 0;
+        }
+
+        .container {
+            text-align: center;
+            padding: 40px;
+            margin: auto;
+            width: 90%;
+            max-width: 280px;
+            position: relative;
+            top: 60%;
+            transform: translateY(-50%);
+            background: transparent;
+            border-radius: 10px;
+            z-index: 1; /* Asegura que el contenedor esté por encima del fondo */
+        }
+
+        .logo {
+            font-size: 72px;
+            color: #e50914;
+            margin-bottom: 40px;
+            font-weight: 900;
+            text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 15px 30px;
+            background: #9B0000; /* Fondo rojo oscuro */
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5); /* Sombra suave */
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            font-size: 18px;
+            font-weight: bold;
+            transition: background-color 0.3s, transform 0.3s, box-shadow 0.3s;
+            margin-top: 30px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.50);
+        }
+
+        .btn:hover {
+            background-color: #f40612;
+            transform: scale(1.05);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.7);
+        }
+
+        .btn:focus {
+            outline: none;
+        }
+
+        .social-icons {
+            margin-top: 180px;
+            margin-bottom: 20px;
+        }
+
+        .social-icons img {
+            width: 40px;
+            margin: 0 10px;
+            vertical-align: middle;
+        }
+
+        .footer {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 14px;
+            color: #777;
+        }
+        .separador {
+            border-top: 2px solid #333; /* Color gris oscuro */
+            margin tp: 800px; /* Espaciado superior e inferior */
+        }
+    </style>
+</head>
+<body>
+    <div class="background"></div>
+    <div class="container">
+        <div class="logo">FLIXY</div>
+        <a href="Actualización/inicio" class="btn">Iniciar</a> <br>
+        
+        <div class="social-icons">
+          
+            <br>
+            <a href="https://t.me/flixy_peliculas"><img src="https://cdn.icon-icons.com/icons2/923/PNG/256/telegram_icon-icons.com_72055.png" alt="Telegram"></a>
+            <a href="https://t.me/flixy_oficial"><img src="https://cdn.icon-icons.com/icons2/923/PNG/256/telegram_icon-icons.com_72055.png" alt="Telegram"></a>
+            <a href="https://www.facebook.com/profile.php?id=61556337333658&mibextid=ZbWKwL"><img src="https://cdn.icon-icons.com/icons2/2429/PNG/512/facebook_logo_icon_147291.png" alt="Facebook"></a>
+        </div>
+    </div>
+    <div class="footer">
+       &copy; 2024 Derechos Reservados 
+    </div>
+</body>
+</html>
